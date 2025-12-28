@@ -34,6 +34,20 @@ export const addCourse = async (course: Omit<Course, 'id'>): Promise<{ error: an
   return { error }
 }
 
+export const updateCourse = async (id: string, course: Omit<Course, 'id'>): Promise<{ error: any }> => {
+  const { error } = await supabase
+    .from('courses')
+    .update({
+      title: course.title,
+      description: course.description || null,
+      youtube_video_id: course.youtubeVideoId,
+      resources: course.resources || []
+    })
+    .eq('id', id)
+
+  return { error }
+}
+
 export const deleteCourse = async (id: string): Promise<{ error: any }> => {
   const { error } = await supabase
     .from('courses')

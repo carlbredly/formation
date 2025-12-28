@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { getCourses, deleteCourse } from '../lib/courses'
 import type { Course } from '../types/course'
+import EditCourseForm from './EditCourseForm'
 
 const CourseList = () => {
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null)
 
   const loadCourses = async () => {
     setLoading(true)
@@ -30,6 +32,19 @@ const CourseList = () => {
     }
   }
 
+  const handleEdit = (course: Course) => {
+    setEditingCourse(course)
+  }
+
+  const handleEditSuccess = () => {
+    setEditingCourse(null)
+    loadCourses()
+  }
+
+  const handleEditCancel = () => {
+    setEditingCourse(null)
+  }
+
   if (loading) {
     return <div className="text-white">Chargement...</div>
   }
@@ -48,31 +63,49 @@ const CourseList = () => {
 
       {error && <p className="text-xs sm:text-sm text-red-500 mb-4">{error}</p>}
 
-      {courses.length === 0 ? (
-        <p className="text-gray-400 text-sm sm:text-base">Aucun cours pour le moment</p>
+      {editingCourse ? (
+        <EditCourseForm 
+          course={editingCourse} 
+          onSuccess={handleEditSuccess}
+          onCancel={handleEditCancel}
+        />
       ) : (
-        <div className="space-y-3">
-          {courses.map((course) => (
-            <div
-              key={course.id}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 bg-[#0F0F0F] rounded-md border border-gray-700 gap-3"
-            >
-              <div className="flex-1 min-w-0">
-                <h3 className="text-white font-semibold text-sm sm:text-base break-words">{course.title}</h3>
-                {course.description && (
-                  <p className="text-xs sm:text-sm text-gray-400 mt-1 line-clamp-2">{course.description}</p>
-                )}
-                <p className="text-xs text-gray-500 mt-1 break-all">ID YouTube: {course.youtubeVideoId}</p>
-              </div>
-              <button
-                onClick={() => handleDelete(course.id)}
-                className="w-full sm:w-auto sm:ml-4 px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-xs sm:text-sm whitespace-nowrap"
-              >
-                Supprimer
-              </button>
+        <>
+          {courses.length === 0 ? (
+            <p className="text-gray-400 text-sm sm:text-base">Aucun cours pour le moment</p>
+          ) : (
+            <div className="space-y-3">
+              {courses.map((course) => (
+                <div
+                  key={course.id}
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 bg-[#0F0F0F] rounded-md border border-gray-700 gap-3"
+                >
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-white font-semibold text-sm sm:text-base wrap-break-word">{course.title}</h3>
+                    {course.description && (
+                      <p className="text-xs sm:text-sm text-gray-400 mt-1 line-clamp-2">{course.description}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1 break-all">ID YouTube: {course.youtubeVideoId}</p>
+                  </div>
+                  <div className="flex gap-2 flex-col sm:flex-row">
+                    <button
+                      onClick={() => handleEdit(course)}
+                      className="w-full sm:w-auto px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm whitespace-nowrap"
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      onClick={() => handleDelete(course.id)}
+                      className="w-full sm:w-auto px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-xs sm:text-sm whitespace-nowrap"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   )
