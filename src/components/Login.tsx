@@ -29,7 +29,7 @@ const Login = () => {
 
   return (
     <div className="flex flex-col items-center justify-center p-4 sm:p-6 rounded-lg bg-[#181818] w-full max-w-xs sm:max-w-sm gap-2">
-        <img src={logo} alt="logo" className="w-12 h-12 sm:w-14 sm:h-14 mb-3 sm:mb-4" />
+        <img src={logo} alt="logo" className="w-12  sm:w-14  mb-3 sm:mb-4" />
         <h1 className="text-xl sm:text-2xl font-bold text-white mb-2">Welcome</h1>
         <p className="text-xs sm:text-sm text-gray-400 mb-4 sm:mb-6 text-center">login to get access to your account</p>
         <form onSubmit={handleSubmit} className="flex flex-col w-full gap-4">
