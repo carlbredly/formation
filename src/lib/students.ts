@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import type { User } from '@supabase/supabase-js'
 
 export interface Student {
   id: string
@@ -38,7 +39,7 @@ export const getStudents = async (): Promise<Student[]> => {
       return []
     }
 
-    return data.users.map((user) => ({
+    return data.users.map((user: User) => ({
       id: user.id,
       email: user.email || '',
       created_at: user.created_at

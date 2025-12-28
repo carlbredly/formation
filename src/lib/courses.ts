@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import type { Course, Resource } from '../types/course'
+import type { Course } from '../types/course'
 
 export const getCourses = async (): Promise<Course[]> => {
   const { data, error } = await supabase

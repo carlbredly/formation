@@ -1,4 +1,6 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
+import type { Session, AuthChangeEvent } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import { checkAdminFromMetadata } from '../lib/admin'
 
@@ -20,15 +22,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // Vérifier la session actuelle
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
+    supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
+      setUser(data.session?.user ?? null)
       setLoading(false)
     })
 
     // Écouter les changements d'authentification
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
