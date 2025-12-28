@@ -67,8 +67,8 @@ const AddCourseForm = ({ onSuccess }: AddCourseFormProps) => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[#181818] rounded-lg p-6 border border-gray-800">
-      <h2 className="text-xl font-bold text-white mb-4">Ajouter un cours</h2>
+    <form onSubmit={handleSubmit} className="bg-[#181818] rounded-lg p-4 sm:p-6 border border-gray-800">
+      <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Ajouter un cours</h2>
       
       <div className="space-y-4">
         <div>
@@ -109,25 +109,25 @@ const AddCourseForm = ({ onSuccess }: AddCourseFormProps) => {
 
         <div>
           <label className="block text-sm text-gray-400 mb-2">Ressources</label>
-          <div className="flex gap-2 mb-2">
+          <div className="flex flex-col sm:flex-row gap-2 mb-2">
             <input
               type="text"
               value={newResourceTitle}
               onChange={(e) => setNewResourceTitle(e.target.value)}
-              className="flex-1 p-2 border border-gray-700 rounded-md bg-[#0F0F0F] text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="flex-1 p-2 border border-gray-700 rounded-md bg-[#0F0F0F] text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-sm sm:text-base"
               placeholder="Titre de la ressource"
             />
             <input
               type="url"
               value={newResourceUrl}
               onChange={(e) => setNewResourceUrl(e.target.value)}
-              className="flex-1 p-2 border border-gray-700 rounded-md bg-[#0F0F0F] text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="flex-1 p-2 border border-gray-700 rounded-md bg-[#0F0F0F] text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-sm sm:text-base"
               placeholder="URL"
             />
             <button
               type="button"
               onClick={handleAddResource}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors whitespace-nowrap text-sm sm:text-base"
             >
               Ajouter
             </button>
@@ -135,12 +135,12 @@ const AddCourseForm = ({ onSuccess }: AddCourseFormProps) => {
           {resources.length > 0 && (
             <div className="space-y-2">
               {resources.map((resource) => (
-                <div key={resource.id} className="flex items-center justify-between p-2 bg-[#0F0F0F] rounded-md">
-                  <span className="text-sm text-white">{resource.title}</span>
+                <div key={resource.id} className="flex items-center justify-between p-2 sm:p-3 bg-[#0F0F0F] rounded-md gap-2">
+                  <span className="text-xs sm:text-sm text-white break-words flex-1">{resource.title}</span>
                   <button
                     type="button"
                     onClick={() => handleRemoveResource(resource.id)}
-                    className="text-red-400 hover:text-red-300 text-sm"
+                    className="text-red-400 hover:text-red-300 text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
                   >
                     Supprimer
                   </button>
