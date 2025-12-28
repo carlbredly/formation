@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import type { Session, AuthChangeEvent } from '@supabase/supabase-js'
+import type { Session, AuthChangeEvent, User as SupabaseUser } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import { checkAdminFromMetadata } from '../lib/admin'
 
-type User = Awaited<ReturnType<typeof supabase.auth.getSession>>['data']['session']['user'] | null
+type User = SupabaseUser | null
 
 interface AuthContextType {
   user: User
