@@ -101,7 +101,7 @@ export interface AffiliateSaleRow {
 }
 
 // Get detailed list of affiliate sales (with code name) for the logged-in user
-export const getMyAffiliateSales = async () => {
+export const getMyAffiliateSales = async (): Promise<{ error: unknown; data: AffiliateSaleRow[] | null }> => {
   const { data, error } = await supabase
     .from('affiliate_sales')
     .select(`
@@ -116,7 +116,7 @@ export const getMyAffiliateSales = async () => {
     .order('created_at', { ascending: false })
 
   if (error) {
-    return { error, data: null as AffiliateSaleRow[] }
+    return { error, data: null }
   }
 
   const rows: AffiliateSaleRow[] = (data || []).map((row: any) => ({

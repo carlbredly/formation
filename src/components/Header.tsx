@@ -3,7 +3,7 @@ import logo from '../assets/mobutu.png'
 import { useAuth } from '../contexts/AuthContext'
 
 const Header = () => {
-  const { user, isAdmin, canAccessDashboard } = useAuth()
+  const { user, canAccessDashboard } = useAuth()
 
   return (
     <header className="w-full bg-[#0a0a0a] border-b border-white/10 px-4 sm:px-6 py-3">
