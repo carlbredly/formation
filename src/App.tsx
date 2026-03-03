@@ -7,17 +7,39 @@ import LoginPage from './components/LoginPage'
 import Home from './components/Home'
 import Profile from './components/Profile'
 import Dashboard from './components/Dashboard'
+import LandingPage from './components/LandingPage'
+import SignupPage from './components/SignupPage'
+import AffiliatePage from './components/AffiliatePage'
+import CoursePage from './components/CoursePage'
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<SignupPage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route
-          path="/"
+          path="/home"
           element={
             <ProtectedRoute>
               <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/course/:id"
+          element={
+            <ProtectedRoute>
+              <CoursePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/affiliate"
+          element={
+            <ProtectedRoute>
+              <AffiliatePage />
             </ProtectedRoute>
           }
         />

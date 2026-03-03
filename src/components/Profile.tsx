@@ -12,39 +12,37 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0F0F0F]">
+    <div className="min-h-screen bg-[#0a0a0a]">
       <Header />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="bg-[#181818] rounded-lg p-4 sm:p-6 lg:p-8 border border-gray-800">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6">Mon Profil</h1>
-          
-          <div className="space-y-4 sm:space-y-6">
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="rounded-2xl border border-white/10 bg-[#111] p-6 sm:p-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-6">My Profile</h1>
+
+          <div className="space-y-5">
             <div>
-              <label className="text-sm text-gray-400 block mb-2">Email</label>
-              <div className="p-3 bg-[#0F0F0F] rounded-md text-white border border-gray-700 break-all text-sm sm:text-base">
+              <label className="block text-xs font-medium text-gray-400 mb-1.5">Email</label>
+              <div className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm break-all">
                 {user?.email}
               </div>
             </div>
-
             <div>
-              <label className="text-sm text-gray-400 block mb-2">ID Utilisateur</label>
-              <div className="p-3 bg-[#0F0F0F] rounded-md text-white border border-gray-700 text-xs sm:text-sm font-mono break-all overflow-x-auto">
+              <label className="block text-xs font-medium text-gray-400 mb-1.5">User ID</label>
+              <div className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-xs font-mono break-all overflow-x-auto">
                 {user?.id}
               </div>
             </div>
-
             <div>
-              <label className="text-sm text-gray-400 block mb-2">Date de création</label>
-              <div className="p-3 bg-[#0F0F0F] rounded-md text-white border border-gray-700 text-sm sm:text-base">
-                {user?.created_at ? new Date(user.created_at).toLocaleDateString('fr-FR') : 'N/A'}
+              <label className="block text-xs font-medium text-gray-400 mb-1.5">Created at</label>
+              <div className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm">
+                {user?.created_at ? new Date(user.created_at).toLocaleDateString('en-US') : 'N/A'}
               </div>
             </div>
 
             <button
               onClick={handleSignOut}
-              className="w-full mt-6 sm:mt-8 p-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors font-semibold text-sm sm:text-base"
+              className="w-full mt-6 py-3 rounded-xl bg-red-500/20 border border-red-400/30 text-red-300 font-semibold text-sm hover:bg-red-500/30 transition-colors"
             >
-              Se déconnecter
+              Log out
             </button>
           </div>
         </div>
@@ -54,5 +52,3 @@ const Profile = () => {
 }
 
 export default Profile
-
-

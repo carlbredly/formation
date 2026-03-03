@@ -8,7 +8,7 @@
   width: 100%;
   min-height: 100vh;
   margin: 0;
-  background-color: #0F0F0F;
+  background-color: #0a0a0a;
   color: #ffffff;
 }
 
@@ -27,6 +27,43 @@ body {
   justify-content: center;
   min-height: 100vh;
   width: 100%;
-  padding: 1rem;
+  padding: 1.5rem;
+  background-color: #0a0a0a;
 }
 
+/* Scrollbar visible pour les listes (ex. étudiants) */
+.student-list-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.35) rgba(255, 255, 255, 0.08);
+}
+.student-list-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.student-list-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+}
+.student-list-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+}
+.student-list-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Dropdowns (select) : fond sombre quand la liste est déployée */
+select option {
+  background: #111;
+  color: #e5e5e5;
+}
+/* Force fond sombre sur le select (liste déroulante) - navigateurs WebKit */
+select:focus option:checked,
+select option:hover,
+select option:focus {
+  background: #1a1a1a;
+  color: #fff;
+}
+/* Fallback : si le navigateur ne style pas les option, au moins la zone du select */
+select {
+  color-scheme: dark;
+}

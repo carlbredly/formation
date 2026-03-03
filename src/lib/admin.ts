@@ -1,6 +1,5 @@
-// Liste des emails admin
-// Vous pouvez modifier cette liste pour ajouter/supprimer des admins
-// Pour plus de sécurité, vous pouvez déplacer cette liste dans un fichier .env
+// List of admin emails (optional: used if user is not in admin_users table)
+// You can add/remove admins here, or move to .env for security
 const ADMIN_EMAILS = [
   'carlbredlyrefuse@gmail.com',
   // Ajoutez ici les emails des administrateurs

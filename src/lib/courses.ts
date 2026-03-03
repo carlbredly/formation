@@ -15,9 +15,8 @@ export const getCourses = async (): Promise<Course[]> => {
   return data.map((course: any) => ({
     id: course.id,
     title: course.title,
-    description: course.description || undefined,
-    youtubeVideoId: course.youtube_video_id,
-    resources: course.resources || []
+    price: course.price != null ? Number(course.price) : 0,
+    thumbnail: course.thumbnail || undefined
   }))
 }
 
@@ -26,9 +25,8 @@ export const addCourse = async (course: Omit<Course, 'id'>): Promise<{ error: an
     .from('courses')
     .insert({
       title: course.title,
-      description: course.description || null,
-      youtube_video_id: course.youtubeVideoId,
-      resources: course.resources || []
+      price: course.price ?? 0,
+      thumbnail: course.thumbnail || null
     })
 
   return { error }
@@ -39,9 +37,8 @@ export const updateCourse = async (id: string, course: Omit<Course, 'id'>): Prom
     .from('courses')
     .update({
       title: course.title,
-      description: course.description || null,
-      youtube_video_id: course.youtubeVideoId,
-      resources: course.resources || []
+      price: course.price ?? 0,
+      thumbnail: course.thumbnail || null
     })
     .eq('id', id)
 

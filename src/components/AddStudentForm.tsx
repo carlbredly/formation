@@ -21,9 +21,9 @@ const AddStudentForm = ({ onSuccess }: AddStudentFormProps) => {
     const { error } = await addStudent(email, password)
 
     if (error) {
-      setError(error.message || 'Erreur lors de l\'ajout de l\'étudiant')
+      setError(error.message || 'Error while adding the student')
     } else {
-      setSuccess('Étudiant ajouté avec succès')
+      setSuccess('Student successfully added')
       setEmail('')
       setPassword('')
       onSuccess()
@@ -33,45 +33,42 @@ const AddStudentForm = ({ onSuccess }: AddStudentFormProps) => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[#181818] rounded-lg p-4 sm:p-6 border border-gray-800">
-      <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Ajouter un étudiant</h2>
-      
+    <form onSubmit={handleSubmit} className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-6">
+      <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Add a student</h2>
+
       <div className="space-y-4">
         <div>
-          <label className="block text-sm text-gray-400 mb-2">Email *</label>
+          <label className="block text-xs font-medium text-gray-400 mb-1.5">Email *</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border border-gray-700 rounded-md bg-[#0F0F0F] text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
-            placeholder="etudiant@example.com"
+            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20"
+            placeholder="student@example.com"
             required
           />
         </div>
-
         <div>
-          <label className="block text-sm text-gray-400 mb-2">Mot de passe *</label>
+          <label className="block text-xs font-medium text-gray-400 mb-1.5">Password *</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border border-gray-700 rounded-md bg-[#0F0F0F] text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
-            placeholder="Mot de passe"
+            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20"
+            placeholder="Password"
             required
             minLength={6}
           />
-          <p className="text-xs text-gray-500 mt-1">Minimum 6 caractères</p>
+          <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
         </div>
-
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        {success && <p className="text-sm text-green-500">{success}</p>}
-
+        {error && <p className="text-sm text-red-400">{error}</p>}
+        {success && <p className="text-sm text-emerald-400">{success}</p>}
         <button
           type="submit"
           disabled={loading}
-          className="w-full p-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-3 rounded-xl bg-emerald-500 text-black font-semibold text-sm hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? 'Ajout en cours...' : 'Ajouter l\'étudiant'}
+          {loading ? 'Adding...' : 'Add student'}
         </button>
       </div>
     </form>

@@ -19,3 +19,5 @@
 -- Note: Cette méthode nécessite des privilèges admin sur Supabase
 -- La méthode 1 via l'interface est plus simple et recommandée
 
+
+

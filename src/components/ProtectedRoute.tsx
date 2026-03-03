@@ -10,8 +10,8 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0F0F0F] flex items-center justify-center">
-        <div className="text-white">Chargement...</div>
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
       </div>
     )
   }
@@ -24,5 +24,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 }
 
 export default ProtectedRoute
+
+
 
 

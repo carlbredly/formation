@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router-dom'
-import Login from './Login'
 import { useAuth } from '../contexts/AuthContext'
+import Signup from './Signup'
 
-const LoginPage = () => {
+const SignupPage = () => {
   const { user, loading } = useAuth()
 
   if (loading) {
@@ -14,15 +14,15 @@ const LoginPage = () => {
   }
 
   if (user) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/home" replace />
   }
 
   return (
     <div className="app-container">
-      <Login />
+      <Signup />
     </div>
   )
 }
 
-export default LoginPage
+export default SignupPage
 

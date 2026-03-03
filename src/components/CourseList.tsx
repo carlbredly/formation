@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { getCourses, deleteCourse } from '../lib/courses'
 import type { Course } from '../types/course'
 import EditCourseForm from './EditCourseForm'
+import ManageLessons from './ManageLessons'
 
 const CourseList = () => {
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [editingCourse, setEditingCourse] = useState<Course | null>(null)
+  const [managingLessonsCourse, setManagingLessonsCourse] = useState<Course | null>(null)
 
   const loadCourses = async () => {
     setLoading(true)
@@ -22,11 +24,11 @@ const CourseList = () => {
   }, [])
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce cours ?')) return
+    if (!confirm('Are you sure you want to delete this course?')) return
 
     const { error } = await deleteCourse(id)
     if (error) {
-      setError(error.message || 'Erreur lors de la suppression')
+      setError(error.message || 'Error while deleting the course')
     } else {
       loadCourses()
     }
@@ -46,22 +48,26 @@ const CourseList = () => {
   }
 
   if (loading) {
-    return <div className="text-white">Chargement...</div>
+    return (
+      <div className="rounded-2xl border border-white/10 bg-[#111] p-6 flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    )
   }
 
   return (
-    <div className="bg-[#181818] rounded-lg p-4 sm:p-6 border border-gray-800">
+    <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-6">
       <div className="flex items-center justify-between mb-4 gap-2">
-        <h2 className="text-lg sm:text-xl font-bold text-white">Liste des cours</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-white">Courses list</h2>
         <button
           onClick={loadCourses}
-          className="px-3 sm:px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors text-xs sm:text-sm whitespace-nowrap"
+          className="px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-sm hover:bg-white/10 transition-colors whitespace-nowrap"
         >
-          Actualiser
+          Refresh
         </button>
       </div>
 
-      {error && <p className="text-xs sm:text-sm text-red-500 mb-4">{error}</p>}
+      {error && <p className="text-sm text-red-400 mb-4">{error}</p>}
 
       {editingCourse ? (
         <EditCourseForm 
@@ -72,33 +78,36 @@ const CourseList = () => {
       ) : (
         <>
           {courses.length === 0 ? (
-            <p className="text-gray-400 text-sm sm:text-base">Aucun cours pour le moment</p>
+            <p className="text-gray-400 text-sm">No courses yet</p>
           ) : (
             <div className="space-y-3">
               {courses.map((course) => (
                 <div
                   key={course.id}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 bg-[#0F0F0F] rounded-md border border-gray-700 gap-3"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 rounded-xl border border-white/10 bg-white/5 gap-3"
                 >
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-white font-semibold text-sm sm:text-base wrap-break-word">{course.title}</h3>
-                    {course.description && (
-                      <p className="text-xs sm:text-sm text-gray-400 mt-1 line-clamp-2">{course.description}</p>
-                    )}
-                    <p className="text-xs text-gray-500 mt-1 break-all">ID YouTube: {course.youtubeVideoId}</p>
+                    <h3 className="text-white font-semibold text-sm sm:text-base">{course.title}</h3>
+                    <p className="text-xs text-gray-500 mt-1">${(course.price ?? 0).toFixed(0)}</p>
                   </div>
                   <div className="flex gap-2 flex-col sm:flex-row">
                     <button
-                      onClick={() => handleEdit(course)}
-                      className="w-full sm:w-auto px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm whitespace-nowrap"
+                      onClick={() => setManagingLessonsCourse(course)}
+                      className="px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-sm hover:bg-white/10 whitespace-nowrap"
                     >
-                      Modifier
+                      Lessons
+                    </button>
+                    <button
+                      onClick={() => handleEdit(course)}
+                      className="px-3 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-sm hover:bg-emerald-500/30 whitespace-nowrap"
+                    >
+                      Edit
                     </button>
                     <button
                       onClick={() => handleDelete(course.id)}
-                      className="w-full sm:w-auto px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-xs sm:text-sm whitespace-nowrap"
+                      className="px-3 py-2 rounded-xl bg-red-500/20 border border-red-500/30 text-red-300 text-sm hover:bg-red-500/30 whitespace-nowrap"
                     >
-                      Supprimer
+                      Delete
                     </button>
                   </div>
                 </div>
@@ -106,6 +115,14 @@ const CourseList = () => {
             </div>
           )}
         </>
+      )}
+
+      {managingLessonsCourse && (
+        <ManageLessons
+          courseId={managingLessonsCourse.id}
+          courseTitle={managingLessonsCourse.title}
+          onClose={() => setManagingLessonsCourse(null)}
+        />
       )}
     </div>
   )
