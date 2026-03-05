@@ -26,6 +26,53 @@ export type AdminStatsResult =
   | { data: AdminDashboardStats; error: null }
   | { data: null; error: string }
 
+/** Limited stats for semi-admin (no revenue, commission, or promo codes). */
+export interface EnrollmentsByCourseRow {
+  course_id: string
+  course_title: string
+  count: number
+}
+
+export interface SemiAdminDashboardStats {
+  totalActiveEnrollments: number
+  totalPendingPayments: number
+  enrollmentsByCourse: EnrollmentsByCourseRow[]
+}
+
+export type SemiAdminStatsResult =
+  | { data: SemiAdminDashboardStats; error: null }
+  | { data: null; error: string }
+
+export const getSemiAdminDashboardStats = async (): Promise<SemiAdminStatsResult> => {
+  const { data, error } = await supabase.rpc('get_semi_admin_dashboard_stats')
+  if (error) {
+    console.error('Error fetching semi-admin stats:', error)
+    return {
+      data: null,
+      error: error.message || 'Error loading statistics.'
+    }
+  }
+  const row = Array.isArray(data) ? data[0] : data
+  if (!row) {
+    return { data: null, error: 'Access denied or no data.' }
+  }
+  const rawByCourse = row.enrollments_by_course
+  const arr = Array.isArray(rawByCourse) ? rawByCourse : rawByCourse ? Object.values(rawByCourse) : []
+  const enrollmentsByCourse: EnrollmentsByCourseRow[] = arr.map((x: any) => ({
+    course_id: x?.course_id ?? '',
+    course_title: x?.course_title ?? '',
+    count: Number(x?.count) || 0
+  }))
+  return {
+    data: {
+      totalActiveEnrollments: Number(row.total_active_enrollments) || 0,
+      totalPendingPayments: Number(row.total_pending_payments) || 0,
+      enrollmentsByCourse
+    },
+    error: null
+  }
+}
+
 export const getAdminDashboardStats = async (): Promise<AdminStatsResult> => {
   const { data, error } = await supabase.rpc('get_admin_dashboard_stats')
   if (error) {

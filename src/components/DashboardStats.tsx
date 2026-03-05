@@ -1,8 +1,18 @@
 import { useState, useEffect } from 'react'
-import { getAdminDashboardStats, type AdminDashboardStats } from '../lib/adminStats'
+import {
+  getAdminDashboardStats,
+  getSemiAdminDashboardStats,
+  type AdminDashboardStats,
+  type SemiAdminDashboardStats
+} from '../lib/adminStats'
 
-const DashboardStats = () => {
+interface DashboardStatsProps {
+  isSemiAdmin?: boolean
+}
+
+const DashboardStats = ({ isSemiAdmin = false }: DashboardStatsProps) => {
   const [stats, setStats] = useState<AdminDashboardStats | null>(null)
+  const [semiStats, setSemiStats] = useState<SemiAdminDashboardStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [refreshCount, setRefreshCount] = useState(0)
@@ -10,25 +20,110 @@ const DashboardStats = () => {
   const loadStats = async () => {
     setLoading(true)
     setError('')
-    const result = await getAdminDashboardStats()
-    if (result.error) {
-      setError(result.error)
-      setStats(null)
+    if (isSemiAdmin) {
+      const result = await getSemiAdminDashboardStats()
+      if (result.error) {
+        setError(result.error)
+        setSemiStats(null)
+      } else {
+        setSemiStats(result.data)
+        setStats(null)
+        setError('')
+      }
     } else {
-      setStats(result.data)
-      setError('')
+      const result = await getAdminDashboardStats()
+      if (result.error) {
+        setError(result.error)
+        setStats(null)
+      } else {
+        setStats(result.data)
+        setSemiStats(null)
+        setError('')
+      }
     }
     setLoading(false)
   }
 
   useEffect(() => {
     loadStats()
-  }, [refreshCount])
+  }, [refreshCount, isSemiAdmin])
 
   if (loading) {
     return (
       <div className="rounded-2xl border border-white/10 bg-[#111] p-8 flex items-center justify-center min-h-[200px]">
         <p className="text-gray-400">Loading statistics...</p>
+      </div>
+    )
+  }
+
+  if (isSemiAdmin) {
+    if (error || !semiStats) {
+      return (
+        <div className="rounded-2xl border border-white/10 bg-[#111] p-6 space-y-3">
+          <p className="text-red-400">{error || 'No data.'}</p>
+          <p className="text-sm text-gray-400">
+            Run <code className="bg-white/10 px-1 rounded">supabase-semi-admin-stats-rpc.sql</code> in the Supabase SQL editor if the statistics do not load.
+          </p>
+        </div>
+      )
+    }
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <p className="text-sm text-gray-400">Overview (enrollments and pending payments).</p>
+          <button
+            type="button"
+            onClick={() => setRefreshCount((c) => c + 1)}
+            className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-sm font-medium hover:bg-white/10 transition-colors"
+          >
+            Refresh
+          </button>
+        </div>
+        <section>
+          <h2 className="text-lg font-semibold text-white mb-4">Overview</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Active enrollments</p>
+              <p className="text-2xl sm:text-3xl font-bold text-white">{semiStats.totalActiveEnrollments}</p>
+              <p className="text-xs text-gray-500 mt-1">valid access</p>
+            </div>
+            <div className="rounded-2xl border border-amber-500/25 bg-amber-500/10 p-5">
+              <p className="text-xs font-medium text-amber-300/90 uppercase tracking-wide mb-1">Pending payments</p>
+              <p className="text-2xl sm:text-3xl font-bold text-amber-300">{semiStats.totalPendingPayments}</p>
+              <p className="text-xs text-amber-300/70 mt-1">awaiting approval</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-[#111] p-5 lg:col-span-1">
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Enrollments by course</p>
+              <p className="text-2xl sm:text-3xl font-bold text-white">{semiStats.enrollmentsByCourse.length}</p>
+              <p className="text-xs text-gray-500 mt-1">courses with students</p>
+            </div>
+          </div>
+        </section>
+        <section className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-6">
+          <h2 className="text-lg font-semibold text-white mb-4">Enrollments by course</h2>
+          {semiStats.enrollmentsByCourse.length === 0 ? (
+            <p className="text-sm text-gray-400">No active enrollments.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-gray-400 border-b border-white/10">
+                    <th className="pb-3 pr-4 font-medium">Course</th>
+                    <th className="pb-3 pr-4 font-medium text-right">Active enrollments</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {semiStats.enrollmentsByCourse.map((s) => (
+                    <tr key={s.course_id} className="border-b border-white/5">
+                      <td className="py-3 pr-4 text-white">{s.course_title}</td>
+                      <td className="py-3 pr-4 text-gray-300 text-right font-medium">{s.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
       </div>
     )
   }
