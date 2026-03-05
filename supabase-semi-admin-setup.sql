@@ -87,7 +87,62 @@ BEGIN
   INSERT INTO course_enrollments (user_id, course_id, access_code, expires_at, status)
   VALUES (p_user_id, p_course_id, v_code, v_expires, 'active')
   ON CONFLICT (user_id, course_id) DO UPDATE SET access_code = EXCLUDED.access_code, expires_at = EXCLUDED.expires_at, status = 'active'
-  RETURNING id, access_code, expires_at INTO v_id, v_code, v_expires;
+  RETURNING course_enrollments.id, course_enrollments.access_code, course_enrollments.expires_at INTO v_id, v_code, v_expires;
   enrollment_id := v_id; access_code := v_code; expires_at := v_expires; RETURN NEXT;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- List all access codes for admin/semi-admin (copy & share with students)
+CREATE OR REPLACE FUNCTION get_enrollment_access_codes()
+RETURNS TABLE (enrollment_id UUID, user_email TEXT, course_title TEXT, access_code TEXT, expires_at TIMESTAMPTZ, status TEXT, created_at TIMESTAMPTZ) AS $$
+BEGIN
+  IF NOT is_admin_or_semi_admin() THEN RETURN; END IF;
+  RETURN QUERY
+  SELECT e.id, u.email::TEXT, c.title::TEXT, e.access_code, e.expires_at, e.status, e.created_at
+  FROM course_enrollments e
+  JOIN courses c ON c.id = e.course_id
+  JOIN auth.users u ON u.id = e.user_id
+  ORDER BY e.created_at DESC;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+GRANT EXECUTE ON FUNCTION get_enrollment_access_codes() TO authenticated;
+
+-- Limited statistics for semi-admin (no revenue, no commission, no promo codes)
+CREATE OR REPLACE FUNCTION get_semi_admin_dashboard_stats()
+RETURNS TABLE (
+  total_active_enrollments bigint,
+  total_pending_payments bigint,
+  enrollments_by_course jsonb
+) AS $$
+DECLARE
+  v_enrollments bigint;
+  v_pending bigint;
+  v_by_course jsonb;
+BEGIN
+  IF NOT is_admin_or_semi_admin() THEN RETURN; END IF;
+
+  SELECT count(*)::bigint INTO v_enrollments
+  FROM course_enrollments
+  WHERE status = 'active' AND expires_at > timezone('utc'::text, now());
+
+  SELECT count(*)::bigint INTO v_pending
+  FROM course_payments WHERE status = 'pending';
+
+  SELECT coalesce(jsonb_agg(obj), '[]'::jsonb) INTO v_by_course
+  FROM (
+    SELECT jsonb_build_object('course_id', c.id, 'course_title', c.title, 'count', count(e.id)::int) AS obj
+    FROM course_enrollments e
+    JOIN courses c ON c.id = e.course_id
+    WHERE e.status = 'active' AND e.expires_at > timezone('utc'::text, now())
+    GROUP BY c.id, c.title
+  ) sub;
+
+  total_active_enrollments := v_enrollments;
+  total_pending_payments := v_pending;
+  enrollments_by_course := v_by_course;
+  RETURN NEXT;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+GRANT EXECUTE ON FUNCTION get_semi_admin_dashboard_stats() TO authenticated;

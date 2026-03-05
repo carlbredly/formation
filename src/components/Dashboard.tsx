@@ -7,12 +7,13 @@ import StudentList from './StudentList'
 import EnrollmentsAdmin from './EnrollmentsAdmin'
 import PaymentsAdmin from './PaymentsAdmin'
 import DashboardStats from './DashboardStats'
+import AccessCodesList from './AccessCodesList'
 import { useAuth } from '../contexts/AuthContext'
 
 const Dashboard = () => {
   const { role } = useAuth()
   const isFullAdmin = role === 'admin'
-  const [activeTab, setActiveTab] = useState<'stats' | 'courses' | 'students' | 'enrollments' | 'payments'>('students')
+  const [activeTab, setActiveTab] = useState<'stats' | 'courses' | 'students' | 'enrollments' | 'access-codes' | 'payments'>('students')
   const [refreshKey, setRefreshKey] = useState(0)
 
   const handleSuccess = () => {
@@ -20,10 +21,11 @@ const Dashboard = () => {
   }
 
   const allTabs = [
-    { id: 'stats' as const, label: 'Statistics', adminOnly: true },
+    { id: 'stats' as const, label: 'Statistics', adminOnly: false },
     { id: 'courses' as const, label: 'Courses', adminOnly: true },
     { id: 'students' as const, label: 'Students', adminOnly: false },
     { id: 'enrollments' as const, label: 'Enrollments', adminOnly: false },
+    { id: 'access-codes' as const, label: 'Access codes', adminOnly: false },
     { id: 'payments' as const, label: 'Payments', adminOnly: false }
   ]
   const tabs = allTabs.filter((t) => !t.adminOnly || isFullAdmin)
@@ -72,6 +74,11 @@ const Dashboard = () => {
         {activeTab === 'enrollments' && (
           <div className="max-w-lg">
             <EnrollmentsAdmin />
+          </div>
+        )}
+        {activeTab === 'access-codes' && (
+          <div className="max-w-4xl">
+            <AccessCodesList key={refreshKey} />
           </div>
         )}
         {activeTab === 'payments' && (

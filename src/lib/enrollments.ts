@@ -95,6 +95,27 @@ export const validateAccessCode = async (
     }
 }
 
+/** Admin/semi-admin: list all enrollment access codes (to copy and share with students). */
+export interface EnrollmentAccessCodeRow {
+  enrollment_id: string
+  user_email: string | null
+  course_title: string | null
+  access_code: string
+  expires_at: string
+  status: string
+  created_at: string
+}
+
+export const getEnrollmentAccessCodes = async (): Promise<{
+  error: unknown
+  data: EnrollmentAccessCodeRow[] | null
+}> => {
+  const { data, error } = await supabase.rpc('get_enrollment_access_codes')
+  if (error) return { error, data: null }
+  const rows = (Array.isArray(data) ? data : []) as EnrollmentAccessCodeRow[]
+  return { error: null, data: rows }
+}
+
 /** Admin: create enrollment and get generated access code (valid 3 months). */
 export const createEnrollmentWithCode = async (
   userId: string,

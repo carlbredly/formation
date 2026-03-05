@@ -168,7 +168,7 @@ BEGIN
     access_code = EXCLUDED.access_code,
     expires_at = EXCLUDED.expires_at,
     status = 'active'
-  RETURNING id, access_code, expires_at INTO v_id, v_code, v_expires;
+  RETURNING course_enrollments.id, course_enrollments.access_code, course_enrollments.expires_at INTO v_id, v_code, v_expires;
   enrollment_id := v_id;
   access_code := v_code;
   expires_at := v_expires;
