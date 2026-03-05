@@ -32,13 +32,21 @@ const DashboardStats = ({ isSemiAdmin = false }: DashboardStatsProps) => {
       }
     } else {
       const result = await getAdminDashboardStats()
-      if (result.error) {
-        setError(result.error)
-        setStats(null)
-      } else {
+      if (result.data) {
         setStats(result.data)
         setSemiStats(null)
         setError('')
+      } else {
+        // Admin stats returned nothing (e.g. user in semi_admin only) → try semi-admin stats
+        const semiResult = await getSemiAdminDashboardStats()
+        if (semiResult.data) {
+          setSemiStats(semiResult.data)
+          setStats(null)
+          setError('')
+        } else {
+          setError(result.error || semiResult.error || 'No data.')
+          setStats(null)
+        }
       }
     }
     setLoading(false)
@@ -56,17 +64,7 @@ const DashboardStats = ({ isSemiAdmin = false }: DashboardStatsProps) => {
     )
   }
 
-  if (isSemiAdmin) {
-    if (error || !semiStats) {
-      return (
-        <div className="rounded-2xl border border-white/10 bg-[#111] p-6 space-y-3">
-          <p className="text-red-400">{error || 'No data.'}</p>
-          <p className="text-sm text-gray-400">
-            Run <code className="bg-white/10 px-1 rounded">supabase-semi-admin-stats-rpc.sql</code> in the Supabase SQL editor if the statistics do not load.
-          </p>
-        </div>
-      )
-    }
+  if (semiStats) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -124,6 +122,17 @@ const DashboardStats = ({ isSemiAdmin = false }: DashboardStatsProps) => {
             </div>
           )}
         </section>
+      </div>
+    )
+  }
+
+  if (isSemiAdmin && (error || !semiStats)) {
+    return (
+      <div className="rounded-2xl border border-white/10 bg-[#111] p-6 space-y-3">
+        <p className="text-red-400">{error || 'No data.'}</p>
+        <p className="text-sm text-gray-400">
+          Run <code className="bg-white/10 px-1 rounded">supabase-semi-admin-stats-rpc.sql</code> in the Supabase SQL editor if the statistics do not load.
+        </p>
       </div>
     )
   }
