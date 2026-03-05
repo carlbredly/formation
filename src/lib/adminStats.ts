@@ -88,7 +88,7 @@ export const getAdminDashboardStats = async (): Promise<AdminStatsResult> => {
     return {
       data: null,
       error:
-        'Access denied. Add your user to the admin_users table (SQL editor: INSERT INTO admin_users (user_id) SELECT id FROM auth.users WHERE email = \'your@email.com\' ON CONFLICT DO NOTHING;).'
+        'Access denied. Full admin: run supabase-add-admin-user.sql. Dashboard + stats only (semi-admin): run supabase-add-semi-admin-user.sql. Replace the email and run in the Supabase SQL Editor.'
     }
   }
 

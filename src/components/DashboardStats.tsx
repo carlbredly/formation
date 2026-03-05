@@ -133,7 +133,7 @@ const DashboardStats = ({ isSemiAdmin = false }: DashboardStatsProps) => {
       <div className="rounded-2xl border border-white/10 bg-[#111] p-6 space-y-3">
         <p className="text-red-400">{error || 'No data.'}</p>
         <p className="text-sm text-gray-400">
-          Make sure the <code className="bg-white/10 px-1 rounded">get_admin_dashboard_stats</code> function exists in Supabase (run <code className="bg-white/10 px-1 rounded">supabase-admin-stats-rpc.sql</code>) and your account is in the <code className="bg-white/10 px-1 rounded">admin_users</code> table.
+          Run <code className="bg-white/10 px-1 rounded">supabase-admin-stats-rpc.sql</code> if the stats RPC is missing. To grant access: <strong>full admin</strong> → <code className="bg-white/10 px-1 rounded">supabase-add-admin-user.sql</code>; <strong>dashboard + stats only (semi-admin)</strong> → <code className="bg-white/10 px-1 rounded">supabase-add-semi-admin-user.sql</code>. Replace the email and run in the Supabase SQL Editor.
         </p>
       </div>
     )
