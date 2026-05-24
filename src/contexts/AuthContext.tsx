@@ -15,7 +15,7 @@ interface AuthContextType {
   isSemiAdmin: boolean
   canAccessDashboard: boolean
   signIn: (email: string, password: string) => Promise<{ error: any }>
-  signUp: (email: string, password: string) => Promise<{ error: any }>
+  signUp: (email: string, password: string) => Promise<{ error: any; data: any }>
   signOut: () => Promise<void>
 }
 
@@ -66,11 +66,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     })
-    return { error }
+    return { data, error }
   }
 
   const signOut = async () => {

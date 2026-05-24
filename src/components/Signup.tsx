@@ -9,6 +9,7 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
   const { signUp } = useAuth()
   const navigate = useNavigate()
 
@@ -20,13 +21,37 @@ const Signup = () => {
       return
     }
     setLoading(true)
-    const { error } = await signUp(email, password)
+    const { data, error } = await signUp(email, password)
     if (error) {
       setError(error.message || 'Error while creating your account')
+    } else if (data?.session) {
+      navigate('/home')
     } else {
-      navigate('/login')
+      setSuccess(true)
     }
     setLoading(false)
+  }
+
+  if (success) {
+    return (
+      <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-[#111] p-6 sm:p-8 shadow-2xl">
+        <img src={logo} alt="logo" className="w-12 h-12 sm:w-14 sm:h-14 rounded-full mx-auto mb-5" />
+        <h1 className="text-xl sm:text-2xl font-bold text-white text-center mb-1">Check your email</h1>
+        <p className="text-sm text-gray-400 text-center mb-4">
+          A confirmation link has been sent to <span className="text-emerald-400">{email}</span>.
+        </p>
+        <p className="text-sm text-gray-400 text-center mb-6">
+          Click the link in the email to verify your account, then come back here to log in.
+        </p>
+        <button
+          type="button"
+          onClick={() => navigate('/login')}
+          className="w-full py-3 rounded-xl bg-emerald-500 text-black font-semibold text-sm hover:bg-emerald-400 transition-colors"
+        >
+          Go to login
+        </button>
+      </div>
+    )
   }
 
   return (
