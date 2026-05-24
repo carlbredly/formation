@@ -10,7 +10,7 @@ interface SEOProps {
 
 const SITE_NAME = 'Retouch Academy'
 const BASE_URL = 'https://retouchacademy.vercel.app'
-const DEFAULT_IMAGE = `${BASE_URL}/og.jpeg`
+const DEFAULT_IMAGE = `${BASE_URL}/og.jpg`
 const DEFAULT_DESCRIPTION =
   'Decouvrez notre plateforme de formation en ligne. Accedez a des cours de qualite, suivez votre progression et developpez vos competences.'
 
