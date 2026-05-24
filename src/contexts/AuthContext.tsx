@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { Session, AuthChangeEvent, User as SupabaseUser } from '@supabase/supabase-js'
-import { supabase } from '../lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+import { supabase, supabaseUrl } from '../lib/supabase'
 import { checkAdminFromMetadata } from '../lib/admin'
 import { getMyRole, type DashboardRole } from '../lib/adminUsers'
 
@@ -57,6 +58,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => { cancelled = true }
   }, [user])
 
+  const getAdminClient = () => {
+    const serviceRoleKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
+    return createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    })
+  }
+
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -66,12 +74,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const signUp = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({
+    const adminClient = getAdminClient()
+    const { error: createError } = await adminClient.auth.admin.createUser({
       email,
       password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/login`,
-      },
+      email_confirm: true,
+    })
+    if (createError) {
+      return { data: null, error: createError }
+    }
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     })
     return { data, error }
   }
