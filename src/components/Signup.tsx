@@ -10,12 +10,14 @@ const Signup = () => {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
   const { signUp } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    if (cooldown > 0) return
     if (password !== confirmPassword) {
       setError('Passwords do not match.')
       return
@@ -23,7 +25,22 @@ const Signup = () => {
     setLoading(true)
     const { data, error } = await signUp(email, password)
     if (error) {
-      setError(error.message || 'Error while creating your account')
+      const isRateLimited = error?.status === 429 || error?.code === 'over_email_send_rate_limit'
+      if (isRateLimited) {
+        setCooldown(30)
+        setError('Too many attempts. Please wait 30 seconds before trying again.')
+        const timer = setInterval(() => {
+          setCooldown((prev) => {
+            if (prev <= 1) {
+              clearInterval(timer)
+              return 0
+            }
+            return prev - 1
+          })
+        }, 1000)
+      } else {
+        setError(error.message || 'Error while creating your account')
+      }
     } else if (data?.session) {
       navigate('/home')
     } else {
@@ -94,10 +111,10 @@ const Signup = () => {
         {error && <p className="text-xs text-red-400">{error}</p>}
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || cooldown > 0}
           className="w-full py-3 rounded-xl bg-emerald-500 text-black font-semibold text-sm hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? 'Creating account...' : 'Create my account'}
+          {loading ? 'Creating account...' : cooldown > 0 ? `Wait ${cooldown}s...` : 'Create my account'}
         </button>
       </form>
 
