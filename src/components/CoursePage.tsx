@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Header from './Header'
+import SEO from './SEO'
 import { getCourses } from '../lib/courses'
 import { getEnrollmentForCourse } from '../lib/enrollments'
 import { getLessonsByCourseId } from '../lib/lessons'
@@ -98,6 +99,10 @@ const CoursePage = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <SEO
+        title={course.title}
+        url={`https://retouchacademy.vercel.app/course/${course.id}`}
+      />
       <Header />
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         <div className="mb-6">

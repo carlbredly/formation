@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import logo from '../assets/mobutu.png'
 import { useAuth } from '../contexts/AuthContext'
+import SEO from './SEO'
 
 const COURSE_PRICE = 200
 const COMMISSION_RATE = 0.10
@@ -12,6 +13,11 @@ const LandingPage = () => {
 
   return (
     <div className="relative min-h-screen bg-[#050505] text-white overflow-hidden">
+      <SEO
+        title="Retouch Academy - Photo Retouching & Editing Courses"
+        description="Master photo retouching and editing with Photoshop & Lightroom. Online courses from beginner to professional level with hands-on projects and RAW files."
+        url="https://retouchacademy.vercel.app/"
+      />
       {/* Background grid + gradient */}
       <div
         className="pointer-events-none absolute inset-0 opacity-40"

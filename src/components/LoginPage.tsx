@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router-dom'
 import Login from './Login'
 import { useAuth } from '../contexts/AuthContext'
+import SEO from './SEO'
 
 const LoginPage = () => {
   const { user, loading } = useAuth()
@@ -19,6 +20,10 @@ const LoginPage = () => {
 
   return (
     <div className="app-container">
+      <SEO
+        title="Login - Retouch Academy"
+        url="https://retouchacademy.vercel.app/login"
+      />
       <Login />
     </div>
   )
